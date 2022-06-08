@@ -1,10 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:iranigame/data/send_sms.dart';
+import 'package:iranigame/data/username.dart';
 
 abstract class IAuthDataSource {
   Future<SendSms> sendSms(String username, String password);
 
   Future<SendSms> sendCode(String username, String password, String code);
+  Future<Username> finalRegistration(String fullName,String username,String phone,String password);
+
 }
 
 class AuthDataSource extends IAuthDataSource {
@@ -28,5 +31,16 @@ class AuthDataSource extends IAuthDataSource {
       "code": code,
     });
     return SendSms.fromJson(response.data);
+  }
+
+  @override
+  Future<Username> finalRegistration(String fullName, String username, String phone, String password) async{
+    final response = await httpClient.post('register/username', data: {
+      "name": fullName,
+      "username": username,
+      "phone": phone,
+      "password":password
+    });
+    return Username.fromJson(response.data);
   }
 }

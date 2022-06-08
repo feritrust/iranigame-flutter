@@ -274,11 +274,11 @@ class CustomInput extends StatelessWidget {
   const CustomInput({
     Key? key,
     this.obscureText = false,
-    required this.icon,
+    this.icon,
     required this.hintText,
     required this.controller,
   }) : super(key: key);
-  final IconData icon;
+  final IconData? icon;
   final String hintText;
   final bool obscureText;
   final TextEditingController controller;
