@@ -38,7 +38,7 @@ class AuthScreen extends StatelessWidget {
                 Future.delayed(const Duration(seconds: 1));
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => OtpScreen(),
+                    builder: (context) => OtpScreen(username: username.text, password: password.text),
                   ),
                 );
               } else if (state is AuthError) {

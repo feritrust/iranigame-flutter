@@ -1,68 +1,173 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:iranigame/theme.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iranigame/common/utils.dart';
+import 'package:iranigame/data/repo/auth_repository.dart';
+import 'package:iranigame/ui/auth/otp/bloc/otp_bloc.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class OtpScreen extends StatelessWidget {
-  OtpScreen({Key? key}) : super(key: key);
+  OtpScreen(
+      {Key? key, required this.username, required this.password})
+      : super(key: key);
+  final String username;
+  final String password;
+  TextEditingController textEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
-    return SafeArea(
-      child: Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                margin: const EdgeInsets.all(16),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      color: themeData.colorScheme.onSecondary, width: 1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  children: [
-                    const OtpWidget(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('120 ثانیه'),
-                        TextButton(
-                            onPressed: () {},
-                            child: const Text('ارسال مجدد کد')),
-                      ],
-                    ),
-                    SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          child: const Text('تایید'),
-                        ))
-                  ],
-                ),
-              ),
-            ],
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: SafeArea(
+        child: Scaffold(
+          body: BlocProvider<OtpBloc>(
+              create: (context) => OtpBloc(authRepository, username, password),
+          child: BlocBuilder<OtpBloc, OtpState>(
+              builder: (context, state) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: themeData.colorScheme.onSecondary,
+                              width: 1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          children: [
+                            OtpWidget(controller: textEditingController,),
+                            const OtpTimer(),
+                            SizedBox(
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if(textEditingController.text.length > 6){
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('کد راه کامل وارد کنید'),
+                                      ),
+                                    );
+                                  }else{
+                                    BlocProvider.of<OtpBloc>(context)
+                                        .add(OtpButtonClicked(textEditingController.value.text));
+                                  }
+                                },
+                                child: const Text('تایید'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
           ),
         ),
+      ),
       ),
     );
   }
 }
 
-class OtpWidget extends StatefulWidget {
-  const OtpWidget({
+class OtpTimer extends StatefulWidget {
+  const OtpTimer({
     Key? key,
   }) : super(key: key);
+
+  @override
+  State<OtpTimer> createState() => _OtpTimerState();
+}
+
+class _OtpTimerState extends State<OtpTimer> {
+  Timer? countdownTimer;
+  Duration myDuration = const Duration(seconds: durationRetryResendCode);
+
+  @override
+  Widget build(BuildContext context) {
+    String strDigits(int n) => n.toString().padLeft(2, '0');
+    final seconds =
+    strDigits(myDuration.inSeconds.remainder(durationRetryResendCode));
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        TextButton(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                  (Set<MaterialState> states) {
+                if (states.contains(MaterialState.disabled)) {
+                  return Colors.grey;
+                } else {
+                  return Colors.transparent;
+                }
+              },
+            ),
+          ),
+          onPressed: myDuration.inSeconds > 0
+              ? null
+              : () {
+            myDuration = const Duration(seconds: durationRetryResendCode);
+            startTimer();
+            BlocProvider.of<OtpBloc>(context).add(OtpRetrySendCode());
+          },
+          child: const Text("ارسال مجدد کد تایید"),
+        ),
+        Text("$seconds ثانیه"),
+      ],
+    );
+  }
+
+  void startTimer() {
+    countdownTimer =
+        Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
+  }
+
+  void setCountDown() {
+    const reduceSecondsBy = 1;
+    setState(() {
+      final seconds = myDuration.inSeconds - reduceSecondsBy;
+      if (seconds < 0) {
+        countdownTimer!.cancel();
+      } else {
+        myDuration = Duration(seconds: seconds);
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    startTimer();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    countdownTimer!.cancel();
+    super.dispose();
+  }
+}
+
+class OtpWidget extends StatefulWidget {
+  const OtpWidget({
+    Key? key, required this.controller,
+  }) : super(key: key);
+  final TextEditingController controller;
 
   @override
   State<OtpWidget> createState() => _OtpWidgetState();
 }
 
 class _OtpWidgetState extends State<OtpWidget> {
-  TextEditingController textEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +195,7 @@ class _OtpWidgetState extends State<OtpWidget> {
       animationDuration: const Duration(milliseconds: 300),
       textStyle: const TextStyle(fontSize: 20, color: Colors.black),
       enableActiveFill: true,
-      controller: textEditingController,
+      controller: widget.controller,
       keyboardType: TextInputType.number,
       onCompleted: (v) {
         print("Completed");
@@ -109,7 +214,7 @@ class _OtpWidgetState extends State<OtpWidget> {
 
   @override
   void dispose() {
-    textEditingController.dispose();
+    widget.controller.dispose();
     super.dispose();
   }
 }
