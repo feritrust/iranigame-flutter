@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:iranigame/common/utils.dart';
 import 'package:iranigame/data/repo/auth_repository.dart';
 import 'package:iranigame/theme.dart';
 import 'package:iranigame/ui/auth/bloc/auth_bloc.dart';
+import 'package:iranigame/ui/auth/otp/otp.dart';
+import 'package:iranigame/ui/widgets/default_loading.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({Key? key}) : super(key: key);
@@ -12,19 +16,29 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
-    final TextEditingController username = TextEditingController(text: '09398300660');
-    final TextEditingController password = TextEditingController(text: '123456');
-    final TextEditingController repeatPassword = TextEditingController(text: '123456');
+    final TextEditingController username =
+        TextEditingController(text: '09398300660');
+    final TextEditingController password =
+        TextEditingController(text: '123456');
+    final TextEditingController repeatPassword =
+        TextEditingController(text: '123456');
     return SafeArea(
       child: Scaffold(
         body: BlocProvider<AuthBloc>(
           create: (context) {
-            final bloc = AuthBloc(authRepository: authRepository)..add(AuthStarted());
+            final bloc = AuthBloc(authRepository: authRepository);
+            bloc.add(AuthStarted());
             bloc.stream.listen((state) {
               if (state is AuthSuccess) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('کد ارسال شد'),
+                  ),
+                );
+                Future.delayed(const Duration(seconds: 1));
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => OtpScreen(),
                   ),
                 );
               } else if (state is AuthError) {
@@ -42,37 +56,38 @@ class AuthScreen extends StatelessWidget {
               child: BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, state) {
                   return Center(
-                      child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color: themeData.colorScheme.onSecondary,
-                              width: 1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            children: [
-                              state.isLoginMode
-                                  ? LoginScreen(
-                                      username: username,
-                                      password: password,
-                                    )
-                                  : SignUpScreen(
-                                      username: username,
-                                      password: password,
-                                      repeatPassword: repeatPassword,
-                                    )
-                            ],
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: themeData.colorScheme.onSecondary,
+                                width: 1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              children: [
+                                state.isLoginMode
+                                    ? LoginScreen(
+                                        username: username,
+                                        password: password,
+                                      )
+                                    : SignUpScreen(
+                                        username: username,
+                                        password: password,
+                                        repeatPassword: repeatPassword,
+                                      )
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ));
+                      ],
+                    ),
+                  );
                 },
               )),
         ),
@@ -220,7 +235,9 @@ class SignUpScreen extends StatelessWidget {
               BlocProvider.of<AuthBloc>(context)
                   .add(AuthButtonIsClicked(username.text, password.text));
             },
-            child: context.watch<AuthBloc>().state is AuthLoading? defaultLoading : const Text('مرحله بعدی'),
+            child: context.watch<AuthBloc>().state is AuthLoading
+                ? const DefaultLoading()
+                : const Text('مرحله بعدی'),
           ),
         ),
         const SizedBox(
