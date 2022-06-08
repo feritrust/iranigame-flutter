@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iranigame/common/utils.dart';
 import 'package:iranigame/data/repo/auth_repository.dart';
 import 'package:iranigame/theme.dart';
 import 'package:iranigame/ui/auth/bloc/auth_bloc.dart';
 import 'package:iranigame/ui/auth/otp/otp.dart';
 import 'package:iranigame/ui/widgets/default_loading.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({Key? key}) : super(key: key);
@@ -56,36 +56,39 @@ class AuthScreen extends StatelessWidget {
               child: BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, state) {
                   return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: themeData.colorScheme.onSecondary,
-                                width: 1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              children: [
-                                state.isLoginMode
-                                    ? LoginScreen(
-                                        username: username,
-                                        password: password,
-                                      )
-                                    : SignUpScreen(
-                                        username: username,
-                                        password: password,
-                                        repeatPassword: repeatPassword,
-                                      )
-                              ],
+                    child: SingleChildScrollView(
+                      physics: defaultScrollPhysics,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: themeData.colorScheme.onSecondary,
+                                  width: 1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                children: [
+                                  state.isLoginMode
+                                      ? LoginScreen(
+                                          username: username,
+                                          password: password,
+                                        )
+                                      : SignUpScreen(
+                                          username: username,
+                                          password: password,
+                                          repeatPassword: repeatPassword,
+                                        )
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   );
                 },

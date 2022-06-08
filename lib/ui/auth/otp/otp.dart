@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iranigame/common/utils.dart';
 import 'package:iranigame/data/repo/auth_repository.dart';
 import 'package:iranigame/ui/auth/otp/bloc/otp_bloc.dart';
+import 'package:iranigame/ui/auth/username/username.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class OtpScreen extends StatelessWidget {
@@ -23,52 +24,67 @@ class OtpScreen extends StatelessWidget {
       child: SafeArea(
         child: Scaffold(
           body: BlocProvider<OtpBloc>(
-              create: (context) => OtpBloc(authRepository, username, password),
+              create: (context) {
+                final bloc =  OtpBloc(authRepository, username, password);
+                bloc.stream.listen((state) {
+                  if (state is OtpSuccess) {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => UsernameScreen(username: username,password: password,),));
+                  }else if (state is OtpError) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(state.exception.message),
+                    ));
+                  }
+                });
+                return bloc;
+              },
           child: BlocBuilder<OtpBloc, OtpState>(
               builder: (context, state) {
                 return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.all(16),
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color: themeData.colorScheme.onSecondary,
-                              width: 1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Column(
-                          children: [
-                            OtpWidget(controller: textEditingController,),
-                            const OtpTimer(),
-                            SizedBox(
-                              width: MediaQuery
-                                  .of(context)
-                                  .size
-                                  .width,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  if(textEditingController.text.length > 6){
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('کد راه کامل وارد کنید'),
-                                      ),
-                                    );
-                                  }else{
-                                    BlocProvider.of<OtpBloc>(context)
-                                        .add(OtpButtonClicked(textEditingController.value.text));
-                                  }
-                                },
-                                child: const Text('تایید'),
+                  child: SingleChildScrollView(
+                    physics: defaultScrollPhysics,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: themeData.colorScheme.onSecondary,
+                                width: 1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(
+                            children: [
+                              Directionality(textDirection: TextDirection.ltr,child: OtpWidget(controller: textEditingController,)),
+                              const OtpTimer(),
+                              SizedBox(
+                                width: MediaQuery
+                                    .of(context)
+                                    .size
+                                    .width,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    if(textEditingController.text.length > 6){
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('کد راه کامل وارد کنید'),
+                                        ),
+                                      );
+                                    }else{
+                                      BlocProvider.of<OtpBloc>(context)
+                                          .add(OtpButtonClicked(textEditingController.value.text));
+                                    }
+                                  },
+                                  child: const Text('تایید'),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               }
