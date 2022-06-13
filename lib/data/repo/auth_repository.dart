@@ -34,14 +34,14 @@ class AuthRepository extends IAuthRepository {
   Future<void> finalRegistration(String fullName, String username, String phone, String password) async {
     final Username result = await dataSource.finalRegistration(fullName, username, phone, password);
     _persistAuthToken(result);
-    debugPrint('finalRegistration: ${result.data[0]}');
+    debugPrint('finalRegistration: ${result.data.token}');
   }
 
 
   Future<void> _persistAuthToken(Username authInfo) async {
     final SharedPreferences sharedPreferences =
     await SharedPreferences.getInstance();
-    sharedPreferences.setString("token", authInfo.data[0]);
+    sharedPreferences.setString("token", authInfo.data.token);
     loadAuthInfo();
   }
 

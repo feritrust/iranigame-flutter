@@ -8,13 +8,33 @@ import 'package:iranigame/ui/auth/otp/bloc/otp_bloc.dart';
 import 'package:iranigame/ui/auth/username/username.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-class OtpScreen extends StatelessWidget {
+class OtpScreen extends StatefulWidget {
   OtpScreen(
       {Key? key, required this.username, required this.password})
       : super(key: key);
   final String username;
   final String password;
-  TextEditingController textEditingController = TextEditingController();
+
+  @override
+  State<OtpScreen> createState() => _OtpScreenState();
+}
+
+class _OtpScreenState extends State<OtpScreen> {
+  late final TextEditingController textEditingController;
+
+
+  @override
+  void initState() {
+    textEditingController = TextEditingController();
+    super.initState();
+  }
+
+
+  @override
+  void dispose() {
+    textEditingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +45,10 @@ class OtpScreen extends StatelessWidget {
         child: Scaffold(
           body: BlocProvider<OtpBloc>(
               create: (context) {
-                final bloc =  OtpBloc(authRepository, username, password);
+                final bloc =  OtpBloc(authRepository, widget.username, widget.password);
                 bloc.stream.listen((state) {
                   if (state is OtpSuccess) {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => UsernameScreen(phone: username,password: password,),));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => UsernameScreen(phone: widget.username,password: widget.password,),));
                   }else if (state is OtpError) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text(state.exception.message),

@@ -10,18 +10,20 @@ import 'package:iranigame/ui/auth/bloc/auth_bloc.dart';
 import 'package:iranigame/ui/auth/otp/otp.dart';
 import 'package:iranigame/ui/widgets/default_loading.dart';
 
-class AuthScreen extends StatelessWidget {
+class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
 
   @override
+  State<AuthScreen> createState() => _AuthScreenState();
+}
+
+class _AuthScreenState extends State<AuthScreen> {
+  late TextEditingController username;
+  late TextEditingController password;
+  late TextEditingController repeatPassword;
+  @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
-    final TextEditingController username =
-        TextEditingController(text: '09398300660');
-    final TextEditingController password =
-        TextEditingController(text: '123456');
-    final TextEditingController repeatPassword =
-        TextEditingController(text: '123456');
     return SafeArea(
       child: Scaffold(
         body: BlocProvider<AuthBloc>(
@@ -96,6 +98,22 @@ class AuthScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    username = TextEditingController(text: '09398300660');
+    password = TextEditingController(text:'123456');
+    repeatPassword = TextEditingController(text: '123456');
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    username.dispose();
+    password.dispose();
+    repeatPassword.dispose();
+    super.dispose();
   }
 }
 

@@ -1,15 +1,16 @@
-import 'package:json_annotation/json_annotation.dart';
+class Username {
+  bool isDone;
+  Data data;
 
-part 'username.g.dart';
+  Username.fromJson(Map<String, dynamic> json)
+      : isDone = json['isDone'],
+        data = Data.fromJson(json['data']);
+}
 
-@JsonSerializable()
-class Username{
-  final bool isDone;
-  final List<dynamic> data;
+class Data {
+  String token;
 
-  Username(this.isDone, this.data);
+  Data.fromJson(Map<String, dynamic> json) :
+    token = json['token'];
 
-  factory Username.fromJson(Map<String, dynamic> json) => _$UsernameFromJson(json);
-
-  Map<String, dynamic> toJson() => _$UsernameToJson(this);
 }
