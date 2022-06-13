@@ -3,23 +3,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iranigame/common/utils.dart';
 import 'package:iranigame/data/repo/auth_repository.dart';
 import 'package:iranigame/ui/auth/auth.dart';
-import 'package:iranigame/ui/auth/username/bloc/username_bloc.dart';
+import 'package:iranigame/ui/auth/sign_up/bloc/username_bloc.dart';
 
-class UsernameScreen extends StatefulWidget {
-  const UsernameScreen({Key? key, required this.phone, required this.password})
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({Key? key, required this.phone, required this.password})
       : super(key: key);
   final String phone;
   final String password;
 
   @override
-  State<UsernameScreen> createState() => _UsernameScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _UsernameScreenState extends State<UsernameScreen> {
-  late TextEditingController fullNameController ;
+class _SignUpScreenState extends State<SignUpScreen> {
+  late TextEditingController fullNameController;
 
   late TextEditingController usernameController;
-
 
   @override
   void initState() {
@@ -27,7 +26,6 @@ class _UsernameScreenState extends State<UsernameScreen> {
     usernameController = TextEditingController();
     super.initState();
   }
-
 
   @override
   void dispose() {
@@ -72,7 +70,13 @@ class _UsernameScreenState extends State<UsernameScreen> {
                               width: 1),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: MainBody(themeData: themeData, usernameController: usernameController,fullNameController: fullNameController,phone: widget.phone,password: widget.password,),
+                        child: MainBody(
+                          themeData: themeData,
+                          usernameController: usernameController,
+                          fullNameController: fullNameController,
+                          phone: widget.phone,
+                          password: widget.password,
+                        ),
                       ),
                     ],
                   ),
@@ -90,7 +94,10 @@ class MainBody extends StatelessWidget {
   const MainBody({
     Key? key,
     required this.themeData,
-    required this.usernameController, required this.fullNameController, required this.phone, required this.password,
+    required this.usernameController,
+    required this.fullNameController,
+    required this.phone,
+    required this.password,
   }) : super(key: key);
 
   final ThemeData themeData;
@@ -98,7 +105,6 @@ class MainBody extends StatelessWidget {
   final TextEditingController usernameController;
   final String phone;
   final String password;
-
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +130,9 @@ class MainBody extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: ElevatedButton(
             onPressed: () {
-              BlocProvider.of<UsernameBloc>(context).add(UsernameFinalRegistration(usernameController.value.text, fullNameController.value.text, phone, password));
+              BlocProvider.of<UsernameBloc>(context).add(
+                  UsernameFinalRegistration(usernameController.value.text,
+                      fullNameController.value.text, phone, password));
             },
             child: const Text('ثبت نهایی'),
           ),

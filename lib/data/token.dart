@@ -1,8 +1,8 @@
-class Username {
+class Token {
   bool isDone;
   Data data;
 
-  Username.fromJson(Map<String, dynamic> json)
+  Token.fromJson(Map<String, dynamic> json)
       : isDone = json['isDone'],
         data = Data.fromJson(json['data']);
 }

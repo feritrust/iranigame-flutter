@@ -21,6 +21,7 @@ class _AuthScreenState extends State<AuthScreen> {
   late TextEditingController username;
   late TextEditingController password;
   late TextEditingController repeatPassword;
+
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
@@ -31,7 +32,7 @@ class _AuthScreenState extends State<AuthScreen> {
             final bloc = AuthBloc(authRepository: authRepository);
             bloc.add(AuthStarted());
             bloc.stream.listen((state) {
-              if (state is AuthSuccess) {
+              if (state is AuthSuccess && state.isLoginMode == false) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('کد ارسال شد'),
@@ -40,10 +41,18 @@ class _AuthScreenState extends State<AuthScreen> {
                 Future.delayed(const Duration(seconds: 1));
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => OtpScreen(username: username.text, password: password.text),
+                    builder: (context) => OtpScreen(
+                        username: username.text, password: password.text),
                   ),
                 );
-              } else if (state is AuthError) {
+              }else if (state is AuthSuccess && state.isLoginMode == true) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('ورود با موفقیت انجام شد'),
+                  ),
+                );
+              }
+              else if (state is AuthError) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(state.exception.message),
@@ -103,7 +112,7 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   void initState() {
     username = TextEditingController(text: '09398300660');
-    password = TextEditingController(text:'123456');
+    password = TextEditingController(text: '123456');
     repeatPassword = TextEditingController(text: '123456');
     super.initState();
   }
@@ -160,7 +169,17 @@ class LoginScreen extends StatelessWidget {
         ),
         SizedBox(
           width: MediaQuery.of(context).size.width,
-          child: ElevatedButton(onPressed: () {}, child: Text('ورود')),
+          child: ElevatedButton(
+            onPressed: () {
+              BlocProvider.of<AuthBloc>(context).add(
+                AuthButtonIsClicked(
+                  username.value.text,
+                  password.value.text,
+                ),
+              );
+            },
+            child: const Text('ورود'),
+          ),
         ),
         const SizedBox(
           height: 12,

@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iranigame/common/utils.dart';
 import 'package:iranigame/data/repo/auth_repository.dart';
 import 'package:iranigame/ui/auth/otp/bloc/otp_bloc.dart';
-import 'package:iranigame/ui/auth/username/username.dart';
+import 'package:iranigame/ui/auth/sign_up/username.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -48,7 +48,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 final bloc =  OtpBloc(authRepository, widget.username, widget.password);
                 bloc.stream.listen((state) {
                   if (state is OtpSuccess) {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => UsernameScreen(phone: widget.username,password: widget.password,),));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignUpScreen(phone: widget.username,password: widget.password,),));
                   }else if (state is OtpError) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text(state.exception.message),

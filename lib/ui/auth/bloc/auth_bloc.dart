@@ -19,6 +19,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (event is AuthButtonIsClicked) {
           emit(AuthLoading(isLoginMode));
           if (isLoginMode) {
+            final result = await authRepository.login(
+                event.username, event.password);
+            emit(AuthSuccess(isLoginMode));
+
           } else {
             final sendSmsResponse =
                 await authRepository.sendSms(event.username, event.password);
