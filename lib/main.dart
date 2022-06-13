@@ -60,10 +60,19 @@ class MyApp extends StatelessWidget {
             secondary: LightThemeColors.secondaryColor,
             onSecondary: Colors.white),
       ),
-      home: AuthRepository.authChangeNotifier.value == null ? const Directionality(
-        textDirection: TextDirection.rtl,
-        child: AuthScreen(),
-      ) : HomeScreen(),
+      home: ValueListenableBuilder(
+        valueListenable: AuthRepository.authChangeNotifier,
+        builder: (context, auth, _) {
+          if (auth != null) {
+            return HomeScreen();
+          } else {
+            return Directionality(
+              textDirection: TextDirection.rtl,
+              child: AuthScreen(),
+            );
+          }
+        },
+      )
     );
   }
 }
