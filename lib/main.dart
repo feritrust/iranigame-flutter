@@ -5,6 +5,7 @@ import 'package:iranigame/data/repo/auth_repository.dart';
 import 'package:iranigame/theme.dart';
 import 'package:iranigame/ui/auth/auth.dart';
 import 'package:iranigame/ui/home/home.dart';
+import 'package:iranigame/ui/root.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -64,9 +65,12 @@ class MyApp extends StatelessWidget {
         valueListenable: AuthRepository.authChangeNotifier,
         builder: (context, auth, _) {
           if (auth != null) {
-            return HomeScreen();
+            return const Directionality(
+              textDirection: TextDirection.rtl,
+              child: RootScreen(),
+            );
           } else {
-            return Directionality(
+            return const Directionality(
               textDirection: TextDirection.rtl,
               child: AuthScreen(),
             );
