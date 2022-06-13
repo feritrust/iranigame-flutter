@@ -2,6 +2,7 @@ import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iranigame/data/repo/auth_repository.dart';
+import 'package:iranigame/data/repo/home_repository.dart';
 import 'package:iranigame/theme.dart';
 
 class RootScreen extends StatefulWidget {
@@ -18,6 +19,7 @@ class _RootScreenState extends State<RootScreen> {
   @override
   void initState() {
     super.initState();
+    homeRepository.getAllProductCategory();
     _pageController = PageController();
   }
 
@@ -41,7 +43,6 @@ class _RootScreenState extends State<RootScreen> {
                 onItemSelected: (index) {
                   setState(() {
                     _selectedTabIndex = index;
-
                   });
                 },
                 items: [
