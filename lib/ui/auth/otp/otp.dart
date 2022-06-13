@@ -28,7 +28,7 @@ class OtpScreen extends StatelessWidget {
                 final bloc =  OtpBloc(authRepository, username, password);
                 bloc.stream.listen((state) {
                   if (state is OtpSuccess) {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => UsernameScreen(username: username,password: password,),));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => UsernameScreen(phone: username,password: password,),));
                   }else if (state is OtpError) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text(state.exception.message),

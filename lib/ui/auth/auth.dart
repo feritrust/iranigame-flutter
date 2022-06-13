@@ -296,9 +296,6 @@ class CustomInput extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(icon),
-          const SizedBox(
-            width: 8,
-          ),
           Expanded(
             child: TextField(
               controller: controller,
@@ -312,8 +309,3 @@ class CustomInput extends StatelessWidget {
     );
   }
 }
-
-/*
-
-
- */

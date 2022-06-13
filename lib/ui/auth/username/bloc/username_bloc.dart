@@ -13,7 +13,8 @@ class UsernameBloc extends Bloc<UsernameEvent, UsernameState> {
   UsernameBloc(this.authRepository) : super(UsernameInitial()) {
     on<UsernameEvent>((event, emit) async{
       if (event is UsernameFinalRegistration) {
-        // final response = await authRepository.
+        final response = await authRepository.finalRegistration(event.fullName, event.username, event.phone, event.password);
+        emit(UsernameSuccess());
       }
     });
   }

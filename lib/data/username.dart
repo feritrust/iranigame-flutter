@@ -5,7 +5,7 @@ part 'username.g.dart';
 @JsonSerializable()
 class Username{
   final bool isDone;
-  final List<String> data;
+  final List<dynamic> data;
 
   Username(this.isDone, this.data);
 

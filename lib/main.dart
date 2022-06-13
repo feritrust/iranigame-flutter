@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iranigame/common/utils.dart';
+import 'package:iranigame/data/repo/auth_repository.dart';
 import 'package:iranigame/theme.dart';
 import 'package:iranigame/ui/auth/auth.dart';
+import 'package:iranigame/ui/home/home.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  authRepository.loadAuthInfo();
   runApp(const MyApp());
 }
 
@@ -57,10 +60,10 @@ class MyApp extends StatelessWidget {
             secondary: LightThemeColors.secondaryColor,
             onSecondary: Colors.white),
       ),
-      home: const Directionality(
+      home: AuthRepository.authChangeNotifier.value == null ? const Directionality(
         textDirection: TextDirection.rtl,
         child: AuthScreen(),
-      ),
+      ) : HomeScreen(),
     );
   }
 }

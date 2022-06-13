@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iranigame/common/utils.dart';
@@ -7,9 +6,9 @@ import 'package:iranigame/ui/auth/auth.dart';
 import 'package:iranigame/ui/auth/username/bloc/username_bloc.dart';
 
 class UsernameScreen extends StatefulWidget {
-  const UsernameScreen({Key? key, required this.username, required this.password})
+  const UsernameScreen({Key? key, required this.phone, required this.password})
       : super(key: key);
-  final String username;
+  final String phone;
   final String password;
 
   @override
@@ -73,7 +72,7 @@ class _UsernameScreenState extends State<UsernameScreen> {
                               width: 1),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: MainBody(themeData: themeData, usernameController: usernameController),
+                        child: MainBody(themeData: themeData, usernameController: usernameController,fullNameController: fullNameController,phone: widget.phone,password: widget.password,),
                       ),
                     ],
                   ),
@@ -91,11 +90,15 @@ class MainBody extends StatelessWidget {
   const MainBody({
     Key? key,
     required this.themeData,
-    required this.usernameController,
+    required this.usernameController, required this.fullNameController, required this.phone, required this.password,
   }) : super(key: key);
 
   final ThemeData themeData;
+  final TextEditingController fullNameController;
   final TextEditingController usernameController;
+  final String phone;
+  final String password;
+
 
   @override
   Widget build(BuildContext context) {
@@ -109,16 +112,22 @@ class MainBody extends StatelessWidget {
         const SizedBox(height: 32),
         CustomInput(
           hintText: 'نام و نام خانوادکی',
-          controller: usernameController,
+          controller: fullNameController,
         ),
         const SizedBox(height: 16),
         CustomInput(
           hintText: 'نام کاربری',
           controller: usernameController,
         ),
-        ElevatedButton(
-          onPressed: () {},
-          child: const Text('ثبت نهایی'),
+        const SizedBox(height: 16),
+        SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: ElevatedButton(
+            onPressed: () {
+              BlocProvider.of<UsernameBloc>(context).add(UsernameFinalRegistration(usernameController.value.text, fullNameController.value.text, phone, password));
+            },
+            child: const Text('ثبت نهایی'),
+          ),
         ),
       ],
     );

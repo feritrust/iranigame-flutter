@@ -8,7 +8,7 @@ part of 'username.dart';
 
 Username _$UsernameFromJson(Map<String, dynamic> json) => Username(
       json['isDone'] as bool,
-      (json['data'] as List<dynamic>).map((e) => e as String).toList(),
+      json['data'] as List<dynamic>,
     );
 
 Map<String, dynamic> _$UsernameToJson(Username instance) => <String, dynamic>{
