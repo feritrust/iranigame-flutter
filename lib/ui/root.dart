@@ -5,6 +5,12 @@ import 'package:iranigame/data/repo/auth_repository.dart';
 import 'package:iranigame/data/repo/home_repository.dart';
 import 'package:iranigame/theme.dart';
 
+const int homeIndex = 0;
+const int cartIndex = 1;
+const int profileIndex = 2;
+const int sellIndex = 2;
+const int chatIndex = 2;
+
 class RootScreen extends StatefulWidget {
   const RootScreen({Key? key}) : super(key: key);
 
@@ -13,13 +19,17 @@ class RootScreen extends StatefulWidget {
 }
 
 class _RootScreenState extends State<RootScreen> {
-  int _selectedTabIndex = 0;
+  int _selectedTabIndex = homeIndex;
   late PageController _pageController;
+  final GlobalKey<NavigatorState> _homeKey = GlobalKey();
+  final GlobalKey<NavigatorState> _cartKey = GlobalKey();
+  final GlobalKey<NavigatorState> _profileKey = GlobalKey();
+  final GlobalKey<NavigatorState> _sellKey = GlobalKey();
+  final GlobalKey<NavigatorState> _chatKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    homeRepository.getAllProductCategory();
     _pageController = PageController();
   }
 
@@ -44,6 +54,10 @@ class _RootScreenState extends State<RootScreen> {
                   setState(() {
                     _selectedTabIndex = index;
                   });
+                  // switch(index) {
+                  //   case 0:
+                  //     Navigator.
+                  // }
                 },
                 items: [
                   BottomNavyBarItem(
@@ -73,6 +87,19 @@ class _RootScreenState extends State<RootScreen> {
               return Container();
             }
           }),
+    );
+  }
+  Widget _navigator(GlobalKey key, int index, Widget child) {
+    return key.currentState == null && _selectedTabIndex != index
+        ? Container()
+        : Navigator(
+      key: key,
+      onGenerateRoute: (settings) => MaterialPageRoute(
+        builder: (context) => Offstage(
+          offstage: _selectedTabIndex != index,
+          child: child,
+        ),
+      ),
     );
   }
 }
